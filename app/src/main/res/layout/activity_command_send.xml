@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- 标题栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="16dp">
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="返回"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="命令发送"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:id="@+id/btnClearLog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="清空日志"
+            android:textSize="14sp"/>
+    </LinearLayout>
+
+    <!-- RS485状态和提示信息 -->
+
+    <!-- 全部发送按钮 -->
+    <Button
+        android:id="@+id/btnSendAll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="发送全部命令 (20条 x 50次)"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:backgroundTint="#FF5722"
+        android:textColor="#FFFFFF"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#CCCCCC"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- 命令按钮区域 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="左转命令 (ADDR 1-5)"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#2196F3"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"/>
+
+            <!-- 左转命令按钮 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnCmd1" style="@style/CmdButton"/>
+                <Button android:id="@+id/btnCmd2" style="@style/CmdButton"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnCmd3" style="@style/CmdButton"/>
+                <Button android:id="@+id/btnCmd4" style="@style/CmdButton"/>
+            </LinearLayout>
+            <Button android:id="@+id/btnCmd5" style="@style/CmdButtonFull"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="右转命令 (ADDR 6-12)"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#4CAF50"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"/>
+
+            <!-- 右转命令按钮 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnCmd6" style="@style/CmdButton"/>
+                <Button android:id="@+id/btnCmd7" style="@style/CmdButton"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnCmd8" style="@style/CmdButton"/>
+                <Button android:id="@+id/btnCmd9" style="@style/CmdButton"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnCmd10" style="@style/CmdButton"/>
+                <Button android:id="@+id/btnCmd11" style="@style/CmdButton"/>
+            </LinearLayout>
+            <Button android:id="@+id/btnCmd12" style="@style/CmdButtonFull"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="尾灯命令 (ADDR 13-20)"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FF9800"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"/>
+
+            <!-- 尾灯命令按钮 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnCmd13" style="@style/CmdButton"/>
+                <Button android:id="@+id/btnCmd14" style="@style/CmdButton"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnCmd15" style="@style/CmdButton"/>
+                <Button android:id="@+id/btnCmd16" style="@style/CmdButton"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnCmd17" style="@style/CmdButton"/>
+                <Button android:id="@+id/btnCmd18" style="@style/CmdButton"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnCmd19" style="@style/CmdButton"/>
+                <Button android:id="@+id/btnCmd20" style="@style/CmdButton"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#CCCCCC"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- 日志显示区 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="发送日志"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:paddingBottom="4dp"/>
+
+    <ScrollView
+        android:id="@+id/scrollViewLog"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="#F5F5F5"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/tvLog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="11sp"
+            android:textColor="#000000"
+            android:fontFamily="monospace"
+            android:textIsSelectable="true"/>
+    </ScrollView>
+
+</LinearLayout>
+

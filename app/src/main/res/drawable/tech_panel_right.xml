@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 背景 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#141B3D"/>
+            <corners android:radius="16dp"/>
+        </shape>
+    </item>
+    
+    <!-- 右边框高亮 -->
+    <item android:right="0dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FF6B35"/>
+            <corners android:radius="16dp"/>
+        </shape>
+    </item>
+    
+    <!-- 内容区 -->
+    <item android:left="2dp" android:top="2dp" android:right="4dp" android:bottom="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#0F1530"/>
+            <corners android:radius="14dp"/>
+        </shape>
+    </item>
+</layer-list>
+

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 原有颜色 -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    
+    <!-- 科技感主题色 -->
+    <color name="tech_bg_dark">#0A0E27</color>
+    <color name="tech_bg_medium">#141B3D</color>
+    <color name="tech_bg_light">#1E2749</color>
+    
+    <!-- 霓虹色 - 开关关闭 -->
+    <color name="neon_off">#2C3E50</color>
+    <color name="neon_off_border">#34495E</color>
+    
+    <!-- 霓虹色 - 左侧灯（蓝色系） -->
+    <color name="neon_left_on">#00D4FF</color>
+    <color name="neon_left_glow">#00F0FF</color>
+    <color name="neon_left_dark">#0088CC</color>
+    
+    <!-- 霓虹色 - 右侧灯（橙红色系） -->
+    <color name="neon_right_on">#FF6B35</color>
+    <color name="neon_right_glow">#FF8C42</color>
+    <color name="neon_right_dark">#CC4419</color>
+    
+    <!-- 线条和分隔符 -->
+    <color name="tech_line">#00D4FF</color>
+    <color name="tech_line_dim">#334455</color>
+    
+    <!-- 文字颜色 -->
+    <color name="text_bright">#FFFFFF</color>
+    <color name="text_dim">#8899AA</color>
+    <color name="text_muted">#666677</color>
+    <color name="text_accent">#00D4FF</color>
+</resources>
