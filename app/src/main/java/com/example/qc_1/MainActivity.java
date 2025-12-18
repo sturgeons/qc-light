@@ -150,6 +150,12 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
         
+        // U625格栅灯控制页面按钮
+        findViewById(R.id.btnOpenU625Control).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, U625ControlActivity.class);
+            startActivity(intent);
+        });
+        
         updateButtonStates();
     }
     

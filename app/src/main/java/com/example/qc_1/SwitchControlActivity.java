@@ -121,10 +121,14 @@ public class SwitchControlActivity extends AppCompatActivity {
     private Handler mainHandler;
     private TextView tvLog;
     
+    // 后中灯专用串口
+    private SerialPortHelper rearCenterLightPort;
+    private Thread rearCenterLightThread;
+    
     // 每个分组的状态和线程
     private Map<Integer, Boolean> groupStates = new HashMap<>();
     private Map<Integer, Thread> groupThreads = new HashMap<>();
-    private Map<Integer, View> groupButtons = new HashMap<>();  // 改为View，因为第7个是TextView
+    private Map<Integer, View> groupButtons = new HashMap<>();
     private Map<Integer, View> groupContainers = new HashMap<>();
     
     // 计时器相关
@@ -155,7 +159,7 @@ public class SwitchControlActivity extends AppCompatActivity {
         // 清空日志
         findViewById(R.id.btnClearLog).setOnClickListener(v -> tvLog.setText(""));
 
-        // 创建7个分组开关按钮（新增后中灯）
+        // 创建7个分组开关按钮
         int[] buttonIds = {
                 R.id.btnGroup1, R.id.btnGroup2, R.id.btnGroup3,
                 R.id.btnGroup4, R.id.btnGroup5, R.id.btnGroup6,
@@ -175,7 +179,7 @@ public class SwitchControlActivity extends AppCompatActivity {
         };
 
         for (int i = 0; i < buttonIds.length; i++) {
-            View btn = findViewById(buttonIds[i]);  // 改为View，因为第7个是TextView
+            View btn = findViewById(buttonIds[i]);
             TextView timer = findViewById(timerIds[i]);
             View container = findViewById(containerIds[i]);
             
@@ -186,22 +190,16 @@ public class SwitchControlActivity extends AppCompatActivity {
             
             final int groupIndex = i;
             
-            // 设置初始样式（根据左右侧不同，第7个是后中灯-使用左侧样式）
-            boolean isLeftSide = (i == 0 || i == 1 || i == 4 || i == 6); // 0,1,4,6 是左侧/中间
+            // 设置初始样式（根据左右侧不同，第7个是后中灯-使用右侧样式）
+            boolean isLeftSide = (i == 0 || i == 1 || i == 4); // 0,1,4 是左侧
             if (isLeftSide) {
                 container.setBackground(ContextCompat.getDrawable(this, R.drawable.tech_button_left_off));
             } else {
                 container.setBackground(ContextCompat.getDrawable(this, R.drawable.tech_button_right_off));
             }
             
-            // 第7个是TextView（后中灯），不可点击，其他是Button
-            if (i == 6) {
-                // 第7个是TextView，已在布局中设置透明度，不需要额外处理
-                container.setAlpha(0.6f); // 容器也设置透明度
-            } else {
-                // 其他是Button，设置点击事件
-                btn.setOnClickListener(v -> toggleGroup(groupIndex));
-            }
+            // 所有按钮都设置点击事件
+            btn.setOnClickListener(v -> toggleGroup(groupIndex));
         }
     }
 
@@ -297,11 +295,17 @@ public class SwitchControlActivity extends AppCompatActivity {
         Group group = GROUPS[groupIndex];
         groupStates.put(groupIndex, true);
         
+        // 第7组（groupIndex=6）后中灯使用特殊处理
+        if (groupIndex == 6) {
+            startRearCenterLight();
+            return;
+        }
+        
         // ⚡ 激活分组（允许发送）
         sendQueueManager.activateGroup(groupIndex);
         
-        // 判断左右侧（左侧：0,1,4,6  右侧：2,3,5）
-        boolean isLeftSide = (groupIndex == 0 || groupIndex == 1 || groupIndex == 4 || groupIndex == 6);
+        // 判断左右侧（左侧：0,1,4  右侧：2,3,5,6）
+        boolean isLeftSide = (groupIndex == 0 || groupIndex == 1 || groupIndex == 4);
         
         // 更新容器样式
         View container = groupContainers.get(groupIndex);
@@ -365,12 +369,18 @@ public class SwitchControlActivity extends AppCompatActivity {
     private void stopGroup(int groupIndex) {
         Group group = GROUPS[groupIndex];
         
+        // 第7组（groupIndex=6）后中灯使用特殊处理
+        if (groupIndex == 6) {
+            stopRearCenterLight();
+            return;
+        }
+        
         // ⚡ 立即停用分组（循环会自动检测并停止）
         groupStates.put(groupIndex, false);
         sendQueueManager.deactivateGroup(groupIndex);
         
-        // 判断左右侧（左侧：0,1,4,6  右侧：2,3,5）
-        boolean isLeftSide = (groupIndex == 0 || groupIndex == 1 || groupIndex == 4 || groupIndex == 6);
+        // 判断左右侧（左侧：0,1,4  右侧：2,3,5,6）
+        boolean isLeftSide = (groupIndex == 0 || groupIndex == 1 || groupIndex == 4);
         
         // 更新容器样式
         View container = groupContainers.get(groupIndex);
@@ -427,6 +437,119 @@ public class SwitchControlActivity extends AppCompatActivity {
 
         // 直接发送（无队列）
         return sendQueueManager.sendCommand(groupId, header, data);
+    }
+    
+    /**
+     * 启动后中灯（使用专用串口 /dev/ttyUSB1）
+     */
+    private void startRearCenterLight() {
+        // 打开后中灯专用串口
+        try {
+            rearCenterLightPort = new SerialPortHelper();
+            // 波特率: 115200 (用户提到11520，应该是115200)
+            // 校验位: NONE (0)
+            // 数据位: 8
+            // 停止位: 1
+            boolean opened = rearCenterLightPort.open("/dev/ttyUSB1", 115200);
+            
+            if (!opened) {
+                updateLog("❌ 后中灯串口打开失败 (/dev/ttyUSB1)");
+                showToast("❌ 后中灯串口打开失败");
+                groupStates.put(6, false);
+                return;
+            }
+            
+            updateLog("✅ 后中灯串口已打开 (/dev/ttyUSB1, 115200, NONE, 1bit)");
+            
+            // 更新容器样式 (后中灯使用右侧样式)
+            View container = groupContainers.get(6);
+            if (container != null) {
+                container.setBackground(ContextCompat.getDrawable(this, R.drawable.tech_button_right_on));
+            }
+            
+            // 启动计时器
+            startTimer(6);
+            
+            // 后中灯命令数据
+            final byte[] rearCenterLightCmd = new byte[] {
+                (byte)0x01, (byte)0x10, (byte)0x80, (byte)0x01, (byte)0x00, (byte)0x05, (byte)0x0A, 
+                (byte)0x01, (byte)0x08, (byte)0x10, (byte)0x01, (byte)0x01, (byte)0x00, (byte)0x04, 
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0xA6, (byte)0x71
+            };
+            
+            // 创建循环发送线程
+            rearCenterLightThread = new Thread(() -> {
+                long startTime = System.currentTimeMillis();
+                long sentCount = 0;
+                
+                while (groupStates.get(6)) {
+                    try {
+                        // 发送命令
+                        boolean success = rearCenterLightPort.send(rearCenterLightCmd);
+                        if (success) {
+                            sentCount++;
+                        }
+                        
+                        // 延迟，避免发送过快
+                        Thread.sleep(10); // 10ms延迟
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                }
+                
+                // 发送结束，更新统计
+                long duration = System.currentTimeMillis() - startTime;
+                long finalCount = sentCount;
+                mainHandler.post(() -> {
+                    updateLog(String.format("后中灯停止 (发送%d条, 耗时%.1fs)", 
+                        finalCount, duration / 1000.0));
+                });
+            }, "RearCenterLight-Thread");
+            
+            rearCenterLightThread.start();
+            updateLog("🟢 后中灯开启，循环发送...");
+            
+        } catch (Exception e) {
+            updateLog("❌ 后中灯启动异常: " + e.getMessage());
+            groupStates.put(6, false);
+        }
+    }
+    
+    /**
+     * 停止后中灯
+     */
+    private void stopRearCenterLight() {
+        // 停止状态
+        groupStates.put(6, false);
+        
+        // 停止线程
+        if (rearCenterLightThread != null && rearCenterLightThread.isAlive()) {
+            try {
+                rearCenterLightThread.interrupt();
+                rearCenterLightThread.join(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            rearCenterLightThread = null;
+        }
+        
+        // 关闭串口
+        if (rearCenterLightPort != null) {
+            rearCenterLightPort.close();
+            rearCenterLightPort = null;
+            updateLog("✅ 后中灯串口已关闭");
+        }
+        
+        // 更新容器样式
+        View container = groupContainers.get(6);
+        if (container != null) {
+            container.setBackground(ContextCompat.getDrawable(this, R.drawable.tech_button_right_off));
+        }
+        
+        // 停止计时器
+        stopTimer(6);
+        
+        updateLog("🔴 后中灯关闭");
     }
 
     /**
@@ -546,6 +669,12 @@ public class SwitchControlActivity extends AppCompatActivity {
             mainHandler.removeCallbacks(runnable);
         }
         timerRunnables.clear();
+        
+        // 关闭后中灯串口（如果存在）
+        if (rearCenterLightPort != null) {
+            rearCenterLightPort.close();
+            rearCenterLightPort = null;
+        }
         
         // 显示最终统计
         if (sendQueueManager != null) {

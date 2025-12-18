@@ -4,73 +4,76 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/tech_bg_gradient"
-    android:padding="16dp">
+    android:padding="12dp">
 
-    <!-- 标题栏 -->
+    <!-- ========== 标题栏 ========== -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingBottom="8dp">
+        android:paddingBottom="10dp">
 
         <Button
             android:id="@+id/btnBack"
-            android:layout_width="100dp"
-            android:layout_height="32dp"
-            android:text="退出"
-            android:textSize="12sp"
+            android:layout_width="90dp"
+            android:layout_height="36dp"
+            android:background="@drawable/tech_button_left_off"
+            android:text="主页"
             android:textColor="@color/text_bright"
-            android:background="@drawable/tech_button_left_off"/>
+            android:textSize="13sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="🚗 车后灯测试系统"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_accent"
             android:gravity="center"
+            android:paddingHorizontal="16dp"
             android:shadowColor="#00D4FF"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="8"/>
+            android:shadowRadius="8"
+            android:text="🚗 CX483灯测试系统"
+            android:textColor="@color/text_accent"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnClearLog"
-            android:layout_width="100dp"
-            android:layout_height="32dp"
+            android:layout_width="90dp"
+            android:layout_height="36dp"
             android:text="清空日志"
             android:textSize="11sp"
+            android:textStyle="bold"
             android:textColor="@color/text_bright"
             android:background="@drawable/tech_button_right_off"/>
     </LinearLayout>
 
-    <!-- 主内容区域 -->
+    <!-- ========== 主控制区域 ========== -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center">
 
-        <!-- ========== 左侧控制面板 ========== -->
+        <!-- ========== 左侧灯组面板 ========== -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:paddingEnd="6dp">
+            android:paddingEnd="5dp">
 
             <!-- 左侧标题 -->
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:text="◀ 左侧灯组"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
                 android:textColor="#00D4FF"
                 android:gravity="center"
+                android:paddingVertical="6dp"
                 android:shadowColor="#00D4FF"
                 android:shadowRadius="6"/>
 
@@ -80,7 +83,7 @@
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:background="@drawable/tech_panel_left"
-                android:padding="10dp"
+                android:padding="8dp"
                 android:gravity="center">
 
                 <!-- 左转1组 -->
@@ -89,10 +92,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:layout_marginVertical="3dp"
+                    android:layout_marginVertical="4dp"
                     android:orientation="vertical"
                     android:background="@drawable/tech_button_left_off"
-                    android:padding="6dp">
+                    android:padding="8dp">
                     
                     <Button
                         android:id="@+id/btnGroup1"
@@ -100,23 +103,25 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:text="左转1\nADDR 1-3"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         android:textStyle="bold"
                         android:textColor="@color/text_bright"
-                        android:background="@android:color/transparent"/>
+                        android:background="@android:color/transparent"
+                        android:gravity="center"/>
                     
                     <TextView
                         android:id="@+id/tvTimer1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="00:00"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="#00D4FF"
                         android:gravity="center"
                         android:fontFamily="monospace"
                         android:shadowColor="#00D4FF"
-                        android:shadowRadius="4"/>
+                        android:shadowRadius="4"
+                        android:paddingTop="4dp"/>
                 </LinearLayout>
 
                 <!-- 左转2组 -->
@@ -125,10 +130,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:layout_marginVertical="3dp"
+                    android:layout_marginVertical="4dp"
                     android:orientation="vertical"
                     android:background="@drawable/tech_button_left_off"
-                    android:padding="6dp">
+                    android:padding="8dp">
                     
                     <Button
                         android:id="@+id/btnGroup2"
@@ -136,23 +141,25 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:text="左转2\nADDR 4-6"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         android:textStyle="bold"
                         android:textColor="@color/text_bright"
-                        android:background="@android:color/transparent"/>
+                        android:background="@android:color/transparent"
+                        android:gravity="center"/>
                     
                     <TextView
                         android:id="@+id/tvTimer2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="00:00"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="#00D4FF"
                         android:gravity="center"
                         android:fontFamily="monospace"
                         android:shadowColor="#00D4FF"
-                        android:shadowRadius="4"/>
+                        android:shadowRadius="4"
+                        android:paddingTop="4dp"/>
                 </LinearLayout>
 
                 <!-- 左尾灯组 -->
@@ -161,10 +168,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:layout_marginVertical="3dp"
+                    android:layout_marginVertical="4dp"
                     android:orientation="vertical"
                     android:background="@drawable/tech_button_left_off"
-                    android:padding="6dp">
+                    android:padding="8dp">
                     
                     <Button
                         android:id="@+id/btnGroup5"
@@ -172,23 +179,25 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:text="左尾灯\nADDR 13-15"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         android:textStyle="bold"
                         android:textColor="@color/text_bright"
-                        android:background="@android:color/transparent"/>
+                        android:background="@android:color/transparent"
+                        android:gravity="center"/>
                     
                     <TextView
                         android:id="@+id/tvTimer5"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="00:00"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="#00D4FF"
                         android:gravity="center"
                         android:fontFamily="monospace"
                         android:shadowColor="#00D4FF"
-                        android:shadowRadius="4"/>
+                        android:shadowRadius="4"
+                        android:paddingTop="4dp"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -198,26 +207,27 @@
             android:layout_width="2dp"
             android:layout_height="match_parent"
             android:background="@drawable/tech_divider_vertical"
-            android:layout_marginHorizontal="6dp"/>
+            android:layout_marginHorizontal="5dp"/>
 
-        <!-- ========== 右侧控制面板 ========== -->
+        <!-- ========== 右侧灯组面板 ========== -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:paddingStart="6dp"
-            android:paddingEnd="6dp">
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp">
 
             <!-- 右侧标题 -->
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:text="右侧灯组 ▶"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
                 android:textColor="#FF6B35"
                 android:gravity="center"
+                android:paddingVertical="6dp"
                 android:shadowColor="#FF6B35"
                 android:shadowRadius="6"/>
 
@@ -227,7 +237,7 @@
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:background="@drawable/tech_panel_right"
-                android:padding="10dp"
+                android:padding="8dp"
                 android:gravity="center">
 
                 <!-- 右转1组 -->
@@ -236,10 +246,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:layout_marginVertical="3dp"
+                    android:layout_marginVertical="4dp"
                     android:orientation="vertical"
                     android:background="@drawable/tech_button_right_off"
-                    android:padding="6dp">
+                    android:padding="8dp">
                     
                     <Button
                         android:id="@+id/btnGroup3"
@@ -247,23 +257,25 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:text="右转1\nADDR 7-9"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         android:textStyle="bold"
                         android:textColor="@color/text_bright"
-                        android:background="@android:color/transparent"/>
+                        android:background="@android:color/transparent"
+                        android:gravity="center"/>
                     
                     <TextView
                         android:id="@+id/tvTimer3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="00:00"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="#FF6B35"
                         android:gravity="center"
                         android:fontFamily="monospace"
                         android:shadowColor="#FF6B35"
-                        android:shadowRadius="4"/>
+                        android:shadowRadius="4"
+                        android:paddingTop="4dp"/>
                 </LinearLayout>
 
                 <!-- 右转2组 -->
@@ -272,10 +284,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:layout_marginVertical="3dp"
+                    android:layout_marginVertical="4dp"
                     android:orientation="vertical"
                     android:background="@drawable/tech_button_right_off"
-                    android:padding="6dp">
+                    android:padding="8dp">
                     
                     <Button
                         android:id="@+id/btnGroup4"
@@ -283,23 +295,25 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:text="右转2\nADDR 10-12"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         android:textStyle="bold"
                         android:textColor="@color/text_bright"
-                        android:background="@android:color/transparent"/>
+                        android:background="@android:color/transparent"
+                        android:gravity="center"/>
                     
                     <TextView
                         android:id="@+id/tvTimer4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="00:00"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="#FF6B35"
                         android:gravity="center"
                         android:fontFamily="monospace"
                         android:shadowColor="#FF6B35"
-                        android:shadowRadius="4"/>
+                        android:shadowRadius="4"
+                        android:paddingTop="4dp"/>
                 </LinearLayout>
 
                 <!-- 右尾灯组 -->
@@ -308,10 +322,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:layout_marginVertical="3dp"
+                    android:layout_marginVertical="4dp"
                     android:orientation="vertical"
                     android:background="@drawable/tech_button_right_off"
-                    android:padding="6dp">
+                    android:padding="8dp">
                     
                     <Button
                         android:id="@+id/btnGroup6"
@@ -319,23 +333,25 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:text="右尾灯\nADDR 16-18"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         android:textStyle="bold"
                         android:textColor="@color/text_bright"
-                        android:background="@android:color/transparent"/>
+                        android:background="@android:color/transparent"
+                        android:gravity="center"/>
                     
                     <TextView
                         android:id="@+id/tvTimer6"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="00:00"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="#FF6B35"
                         android:gravity="center"
                         android:fontFamily="monospace"
                         android:shadowColor="#FF6B35"
-                        android:shadowRadius="4"/>
+                        android:shadowRadius="4"
+                        android:paddingTop="4dp"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -345,16 +361,16 @@
             android:layout_width="2dp"
             android:layout_height="match_parent"
             android:background="@drawable/tech_divider_vertical"
-            android:layout_marginHorizontal="6dp"/>
+            android:layout_marginHorizontal="5dp"/>
 
-        <!-- ========== 中间区域（后中灯 + 日志） ========== -->
+        <!-- ========== 后中灯与日志区域 ========== -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1.5"
+            android:layout_weight="1.3"
             android:orientation="vertical">
 
-            <!-- 后中灯（单独一个，居中显示） -->
+            <!-- 后中灯区域 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -366,34 +382,34 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="⬆ 后中灯"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     android:textStyle="bold"
-                    android:textColor="#00D4FF"
+                    android:textColor="#FF6B35"
                     android:gravity="center"
-                    android:paddingVertical="4dp"
-                    android:shadowColor="#00D4FF"
+                    android:paddingVertical="6dp"
+                    android:shadowColor="#FF6B35"
                     android:shadowRadius="6"/>
 
+                <!-- 后中灯控制按钮 -->
                 <LinearLayout
                     android:id="@+id/containerGroup7"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:background="@drawable/tech_button_left_off"
+                    android:layout_height="100dp"
+                    android:background="@drawable/tech_button_right_off"
                     android:orientation="vertical"
                     android:padding="10dp">
 
-                    <TextView
+                    <Button
                         android:id="@+id/btnGroup7"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:background="@android:color/transparent"
-                        android:text="后中灯\nADDR 19~20"
-                        android:textColor="@color/text_muted"
-                        android:textSize="14sp"
+                        android:text="后中灯\nADDR 19-20"
+                        android:textColor="@color/text_bright"
+                        android:textSize="12sp"
                         android:textStyle="bold"
-                        android:gravity="center"
-                        android:alpha="0.6" />
+                        android:gravity="center"/>
 
                     <TextView
                         android:id="@+id/tvTimer7"
@@ -401,12 +417,13 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="monospace"
                         android:gravity="center"
-                        android:shadowColor="#00D4FF"
+                        android:shadowColor="#FF6B35"
                         android:shadowRadius="4"
                         android:text="00:00"
-                        android:textColor="#00D4FF"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textColor="#FF6B35"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:paddingTop="4dp"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -415,20 +432,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingTop="4dp">
 
+                <!-- 日志标题栏 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:paddingVertical="4dp">
+                    android:paddingVertical="6dp"
+                    android:paddingHorizontal="2dp">
                     
                     <View
-                        android:layout_width="4dp"
-                        android:layout_height="14dp"
+                        android:layout_width="3dp"
+                        android:layout_height="16dp"
                         android:background="#00D4FF"
-                        android:layout_marginEnd="6dp"/>
+                        android:layout_marginEnd="8dp"/>
                     
                     <TextView
                         android:layout_width="wrap_content"
@@ -436,25 +456,29 @@
                         android:text="运行日志"
                         android:textSize="12sp"
                         android:textStyle="bold"
-                        android:textColor="@color/text_accent"/>
+                        android:textColor="@color/text_accent"
+                        android:shadowColor="#00D4FF"
+                        android:shadowRadius="3"/>
                 </LinearLayout>
 
+                <!-- 日志显示区 -->
                 <ScrollView
                     android:id="@+id/scrollViewLog"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:background="#0F1530"
-                    android:padding="10dp">
+                    android:padding="8dp"
+                    android:scrollbars="vertical">
 
                     <TextView
                         android:id="@+id/tvLog"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="10sp"
+                        android:textSize="9sp"
                         android:textColor="@color/text_dim"
                         android:fontFamily="monospace"
-                        android:lineSpacingExtra="1dp"/>
+                        android:lineSpacingExtra="2dp"/>
                 </ScrollView>
             </LinearLayout>
         </LinearLayout>

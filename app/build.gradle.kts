@@ -35,10 +35,10 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
+//    compileOptions {
+//        sourceCompatibility = VERSION_11
+//        targetCompatibility = JavaVersion.VERSION_11
+//    }
     
     externalNativeBuild {
         cmake {
@@ -46,6 +46,7 @@ android {
             version = "3.22.1"
         }
     }
+    ndkVersion = "29.0.14206865"
 }
 
 dependencies {

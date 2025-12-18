@@ -18,7 +18,7 @@
             android:id="@+id/btnBack"
             android:layout_width="70dp"
             android:layout_height="32dp"
-            android:text="退出"
+            android:text="◀ 主页"
             android:textSize="11sp"
             android:textColor="@color/text_bright"
             android:background="@drawable/tech_button_left_off"/>
@@ -27,7 +27,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="🚗 车后灯测试"
+            android:text="💡 CX483 车后灯控制"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/text_accent"
@@ -368,18 +368,17 @@
             android:background="@drawable/tech_button_left_off"
             android:padding="6dp">
             
-            <TextView
+            <Button
                 android:id="@+id/btnGroup7"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="后中灯\nADDR 19~20"
+                android:text="后中灯\n19-21"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="@color/text_muted"
+                android:textColor="@color/text_bright"
                 android:background="@android:color/transparent"
-                android:gravity="center"
-                android:alpha="0.6"/>
+                android:gravity="center"/>
             
             <TextView
                 android:id="@+id/tvTimer7"
@@ -388,10 +387,10 @@
                 android:text="00:00"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#00D4FF"
+                android:textColor="#FF6B35"
                 android:gravity="center"
                 android:fontFamily="monospace"
-                android:shadowColor="#00D4FF"
+                android:shadowColor="#FF6B35"
                 android:shadowRadius="3"/>
         </LinearLayout>
     </LinearLayout>

@@ -35,6 +35,16 @@
         android:textSize="14sp"
         android:backgroundTint="#FF9800"
         android:textColor="#FFFFFF"
+        android:layout_marginBottom="4dp"/>
+
+    <Button
+        android:id="@+id/btnOpenU625Control"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="打开U625格栅灯控制"
+        android:textSize="14sp"
+        android:backgroundTint="#9C27B0"
+        android:textColor="#FFFFFF"
         android:layout_marginBottom="8dp"/>
 
     <!-- RS485部分 -->
