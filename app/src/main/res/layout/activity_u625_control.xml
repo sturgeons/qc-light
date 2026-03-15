@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/tech_bg_gradient"
+    android:padding="12dp">
+
+    <!-- 标题栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="6dp">
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="70dp"
+            android:layout_height="32dp"
+            android:text="◀ 主页"
+            android:textSize="11sp"
+            android:textColor="@color/text_bright"
+            android:background="@drawable/tech_button_left_off"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="💡 U625格栅灯控制"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_accent"
+            android:gravity="center"
+            android:shadowColor="#00D4FF"
+            android:shadowRadius="6"/>
+
+        <Button
+            android:id="@+id/btnClearLog"
+            android:layout_width="70dp"
+            android:layout_height="32dp"
+            android:text="清空日志"
+            android:textSize="10sp"
+            android:textColor="@color/text_bright"
+            android:background="@drawable/tech_button_right_off"/>
+    </LinearLayout>
+
+    <!-- 控制按钮区域 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="6dp">
+
+            <!-- 高亮控制 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="⚡ 高亮控制"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#00D4FF"
+                android:paddingVertical="4dp"
+                android:shadowColor="#00D4FF"
+                android:shadowRadius="4"/>
+
+            <Button
+                android:id="@+id/btnHighBright"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="格栅灯高亮"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_bright"
+                android:background="@drawable/tech_button_left_off"
+                android:layout_marginVertical="4dp"/>
+
+            <!-- 关闭控制 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🔴 关闭控制"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#FF6B35"
+                android:paddingVertical="4dp"
+                android:shadowColor="#FF6B35"
+                android:shadowRadius="4"
+                android:layout_marginTop="8dp"/>
+
+            <Button
+                android:id="@+id/btnAllOff"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="关闭所有格栅灯"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_bright"
+                android:background="@drawable/tech_button_right_off"
+                android:layout_marginVertical="4dp"/>
+
+            <!-- 低亮控制 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🔆 低亮控制"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#00D4FF"
+                android:paddingVertical="4dp"
+                android:shadowColor="#00D4FF"
+                android:shadowRadius="4"
+                android:layout_marginTop="8dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnLeftLow"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:text="左侧低亮"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_bright"
+                    android:background="@drawable/tech_button_left_off"
+                    android:layout_margin="4dp"/>
+
+                <Button
+                    android:id="@+id/btnRightLow"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:text="右侧低亮"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_bright"
+                    android:background="@drawable/tech_button_right_off"
+                    android:layout_margin="4dp"/>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnBothLow"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="左右格栅灯低亮"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_bright"
+                android:background="@drawable/tech_button_left_off"
+                android:layout_marginVertical="4dp"/>
+
+            <!-- 渐变控制 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="✨ 渐变控制"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#00D4FF"
+                android:paddingVertical="4dp"
+                android:shadowColor="#00D4FF"
+                android:shadowRadius="4"
+                android:layout_marginTop="8dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnFadeIn"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:text="渐亮"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_bright"
+                    android:background="@drawable/tech_button_left_off"
+                    android:layout_margin="4dp"/>
+
+                <Button
+                    android:id="@+id/btnFadeOut"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:text="渐灭"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_bright"
+                    android:background="@drawable/tech_button_right_off"
+                    android:layout_margin="4dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 日志区域 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:orientation="vertical"
+        android:paddingTop="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingVertical="2dp">
+            
+            <View
+                android:layout_width="3dp"
+                android:layout_height="12dp"
+                android:background="#00D4FF"
+                android:layout_marginEnd="4dp"/>
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="运行日志"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_accent"/>
+        </LinearLayout>
+
+        <ScrollView
+            android:id="@+id/scrollViewLog"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#0F1530"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/tvLog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="9sp"
+                android:textColor="@color/text_dim"
+                android:fontFamily="monospace"
+                android:lineSpacingExtra="1dp"/>
+        </ScrollView>
+    </LinearLayout>
+</LinearLayout>
+

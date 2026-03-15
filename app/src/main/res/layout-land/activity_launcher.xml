@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/tech_bg_gradient"
+    android:padding="24dp">
+
+    <!-- 左侧：Logo和标题 -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🚗"
+            android:textSize="100sp"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="车灯控制系统"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_accent"
+            android:shadowColor="#00D4FF"
+            android:shadowRadius="8"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vehicle Light Control System"
+            android:textSize="16sp"
+            android:textColor="@color/text_dim"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Version 1.0"
+            android:textSize="12sp"
+            android:textColor="@color/text_dim"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
+
+    <!-- 中央分隔线 -->
+    <View
+        android:layout_width="2dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/tech_divider_vertical"
+        android:layout_marginHorizontal="16dp"/>
+
+    <!-- 右侧：控制按钮 -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="请选择控制模块"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_accent"
+            android:layout_marginBottom="32dp"/>
+
+        <!-- CX483控制页面按钮 -->
+        <LinearLayout
+            android:id="@+id/btnOpenCX483"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/tech_button_left_off"
+            android:gravity="center"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="💡"
+                android:textSize="48sp"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CX483 车后灯控制"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_bright"
+                android:shadowColor="#00D4FF"
+                android:shadowRadius="4"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rear Light Control"
+                android:textSize="13sp"
+                android:textColor="@color/text_dim"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+
+        <!-- U625控制页面按钮 -->
+        <LinearLayout
+            android:id="@+id/btnOpenU625"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/tech_button_right_off"
+            android:gravity="center"
+            android:padding="16dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="✨"
+                android:textSize="48sp"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="U625 格栅灯控制"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_bright"
+                android:shadowColor="#FF6B35"
+                android:shadowRadius="4"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Grille Light Control"
+                android:textSize="13sp"
+                android:textColor="@color/text_dim"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
+
