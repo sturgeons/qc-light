@@ -6,15 +6,23 @@ import android.util.Log;
 
 /**
  * 串口管理类
- * 管理RS485和UART两个串口
+ * 新硬件（Android 13）：
+ * RS485_1 /dev/ttyAS6 灯控，协议不变
+ * RS485_2 /dev/ttyAS5 替代原 232，对端 485 模块转为 LIN
+ * UART     /dev/ttyAS7
  */
 public class SerialPortManager {
     private static final String TAG = "SerialPortManager";
     
-    // 设备路径
-    public static final String RS485_DEVICE = "/dev/ttyS2";
-    public static final String UART_DEVICE = "/dev/ttyUSB0";
+    /** 第一路 485，与灯通讯 */
+    public static final String RS485_DEVICE = "/dev/ttyAS6";
+    /** 第二路 485，替代原 232，供 U625 / 后中灯，对端转为 LIN */
+    public static final String RS485_2_DEVICE = "/dev/ttyAS5";
+    /** 板载 UART */
+    public static final String UART_DEVICE = "/dev/ttyAS7";
     
+    private static final byte[] BREAK_SIGNAL = {0x00};
+
     private SerialPortHelper rs485Port;
     private SerialPortHelper uartPort;
     
@@ -37,23 +45,31 @@ public class SerialPortManager {
      * 打开RS485串口
      */
     public boolean openRS485(int baudRate) {
+        return openRS485(baudRate, true);
+    }
+
+    /**
+     * @param enableRead 调试页需要读回数据。灯控只发不读，避免未接线时接收噪声拖住主线程。
+     */
+    public boolean openRS485(int baudRate, boolean enableRead) {
         try {
-            boolean success = rs485Port.open(RS485_DEVICE, baudRate);
+            boolean success = rs485Port.open(RS485_DEVICE, baudRate, true, enableRead);
             if (success) {
-                rs485Port.setOnDataReceiveListener(new SerialPortHelper.OnDataReceiveListener() {
-                    @Override
-                    public void onDataReceived(byte[] buffer, int size) {
+                if (enableRead) {
+                    rs485Port.setOnDataReceiveListener((buffer, size) -> {
+                        if (dataCallback == null) {
+                            return;
+                        }
                         String data = bytesToHexString(buffer, size);
                         String text = "HEX: " + data + "\nASCII: " + new String(buffer, 0, size);
-                        
                         mainHandler.post(() -> {
                             if (dataCallback != null) {
                                 dataCallback.onRS485DataReceived(text);
                             }
                         });
-                    }
-                });
-                Log.i(TAG, "RS485打开成功，波特率: " + baudRate);
+                    });
+                }
+                Log.i(TAG, "RS485打开成功，波特率: " + baudRate + (enableRead ? "" : "，仅发送"));
             } else {
                 notifyError("RS485打开失败");
             }
@@ -97,6 +113,15 @@ public class SerialPortManager {
         }
     }
     
+    /**
+     * 灯控只发送，关掉已有的接收线程。
+     */
+    public void disableRS485Read() {
+        if (rs485Port != null) {
+            rs485Port.stopRead();
+        }
+    }
+
     /**
      * 关闭RS485
      */
@@ -174,32 +199,21 @@ public class SerialPortManager {
         }
         
         try {
-            // 步骤1: 切换到363636波特率（无校验）
-            Log.i(TAG, "切换波特率到363636(无校验)发送break信号");
-            if (!rs485Port.reconfigureBaudRate(363636, 0)) { // 0 = 无校验
+            if (!rs485Port.reconfigureBaudRate(363636, 0)) {
                 Log.e(TAG, "无法切换到363636波特率");
                 return false;
             }
             
-            // 步骤2: 发送break信号 0x00
-            byte[] breakSignal = {0x00};
-            rs485Port.send(breakSignal);
-            Log.i(TAG, "已发送break信号: 0x00");
-            
-            // 短暂延迟
+            rs485Port.send(BREAK_SIGNAL);
             Thread.sleep(1);
             
-            // 步骤3: 切换到500000波特率（偶校验）
-            Log.i(TAG, "切换波特率到500000(偶校验)发送header");
-            if (!rs485Port.reconfigureBaudRate(500000, 2)) { // 2 = 偶校验
+            if (!rs485Port.reconfigureBaudRate(500000, 2)) {
                 Log.e(TAG, "无法切换到500000波特率");
                 return false;
             }
             
-            // 步骤4: 发送header
             if (header != null && header.length > 0) {
                 rs485Port.send(header);
-                Log.i(TAG, "已发送header: " + bytesToHexString(header, header.length));
             }
             
             // 步骤5: 等待从机回复0xFC
@@ -219,7 +233,6 @@ public class SerialPortManager {
             // 步骤6: 发送data
             if (data != null && data.length > 0) {
                 rs485Port.send(data);
-                Log.i(TAG, "已发送data: " + bytesToHexString(data, data.length));
             }
             
             return true;

@@ -1,3 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">qc_1</string>
+    <string name="app_name">德比灯控</string>
+    <string name="company_name">成都德比数联科技有限公司</string>
+    <string name="company_intro">车灯产线检测与现场通讯控制。用于后灯、格栅灯的点亮测试、计时和总线发送。</string>
+    <string name="app_version">V3.5.1</string>
+    <string name="support_line">技术支持  姚先生  19242828258</string>
+    <string name="support_phone">19242828258</string>
 </resources>

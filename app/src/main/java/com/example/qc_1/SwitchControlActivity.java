@@ -1,6 +1,8 @@
 package com.example.qc_1;
 
 import android.graphics.drawable.Drawable;
+
+import java.io.File;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -116,6 +119,36 @@ public class SwitchControlActivity extends AppCompatActivity {
             new Group("ADDR19-20", 18, 19)   // 后中灯
     };
 
+    private static final byte[][] CMD_HEADER = new byte[CMD_LIST.length][];
+    private static final byte[][] CMD_DATA = new byte[CMD_LIST.length][];
+    private static final byte[] REAR_CENTER_FRAME;
+
+    static {
+        for (int i = 0; i < CMD_LIST.length; i++) {
+            byte[] fullCmd = CMD_LIST[i];
+            int totalLen;
+            if (i == 2 || i == 8) {
+                totalLen = 21;
+            } else if (i <= 11) {
+                totalLen = 19;
+            } else {
+                totalLen = 8;
+            }
+            byte[] header = new byte[4];
+            System.arraycopy(fullCmd, 0, header, 0, 4);
+            byte[] data = new byte[totalLen - 5];
+            System.arraycopy(fullCmd, 5, data, 0, data.length);
+            CMD_HEADER[i] = header;
+            CMD_DATA[i] = data;
+        }
+        byte[] rearCmd = {
+                (byte) 0x01, (byte) 0x10, (byte) 0x80, (byte) 0x01, (byte) 0x00, (byte) 0x05, (byte) 0x0A,
+                (byte) 0x01, (byte) 0x08, (byte) 0x10, (byte) 0x01, (byte) 0x01, (byte) 0x00, (byte) 0x04,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xA6, (byte) 0x71
+        };
+        REAR_CENTER_FRAME = LinBusModule.fromToomossWrite(rearCmd);
+    }
+
     private SerialPortManager serialPortManager;
     private SendQueueManager sendQueueManager;
     private Handler mainHandler;
@@ -138,6 +171,11 @@ public class SwitchControlActivity extends AppCompatActivity {
     
     // 队列统计显示
     private Runnable statsUpdateRunnable;
+    private final Drawable[] styleOn = new Drawable[GROUPS.length];
+    private final Drawable[] styleOff = new Drawable[GROUPS.length];
+    private final ArrayDeque<String> logLines = new ArrayDeque<>();
+    private final SimpleDateFormat logTime = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+    private volatile boolean pageAlive = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,13 +228,21 @@ public class SwitchControlActivity extends AppCompatActivity {
             
             final int groupIndex = i;
             
-            // 设置初始样式（根据左右侧不同，第7个是后中灯-使用右侧样式）
-            boolean isLeftSide = (i == 0 || i == 1 || i == 4); // 0,1,4 是左侧
-            if (isLeftSide) {
-                container.setBackground(ContextCompat.getDrawable(this, R.drawable.tech_button_left_off));
+            int onRes;
+            int offRes;
+            if (i == 6) {
+                onRes = R.drawable.tech_button_center_on;
+                offRes = R.drawable.tech_button_center_off;
+            } else if (i == 0 || i == 1 || i == 4) {
+                onRes = R.drawable.tech_button_left_on;
+                offRes = R.drawable.tech_button_left_off;
             } else {
-                container.setBackground(ContextCompat.getDrawable(this, R.drawable.tech_button_right_off));
+                onRes = R.drawable.tech_button_right_on;
+                offRes = R.drawable.tech_button_right_off;
             }
+            styleOn[i] = ContextCompat.getDrawable(this, onRes).mutate();
+            styleOff[i] = ContextCompat.getDrawable(this, offRes).mutate();
+            container.setBackground(styleOff[i]);
             
             // 所有按钮都设置点击事件
             btn.setOnClickListener(v -> toggleGroup(groupIndex));
@@ -220,10 +266,7 @@ public class SwitchControlActivity extends AppCompatActivity {
         // 启动统计显示（每30秒更新一次）
         startStatisticsUpdater();
         
-        // 检查RS485是否已打开
-        if (!serialPortManager.isRS485Open()) {
-            showToast("⚠️ RS485未打开，请先在主界面打开RS485串口");
-        }
+        updateLog("灯控走 RS485_1，后中灯走 RS485_2，两条路互不影响");
     }
     
     /**
@@ -251,29 +294,12 @@ public class SwitchControlActivity extends AppCompatActivity {
     }
 
     /**
-     * 切换分组状态
+     * 切换分组状态。只改界面，串口打开和发送都放到后台。
      */
     private void toggleGroup(int groupIndex) {
-        // 检查RS485是否打开，如果没打开则自动打开
-        if (!serialPortManager.isRS485Open()) {
-            updateLog("检测到RS485未打开，正在自动打开...");
-            boolean success = autoOpenRS485();
-            if (!success) {
-                showToast("❌ RS485自动打开失败！");
-                updateLog("❌ RS485自动打开失败，请检查设备权限");
-                return;
-            }
-            updateLog("✅ RS485已自动打开 (波特率: 500000)");
-            showToast("✅ RS485已自动打开");
-        }
-
-        boolean currentState = groupStates.get(groupIndex);
-        
-        if (currentState) {
-            // 当前是开启状态，点击后关闭
+        if (Boolean.TRUE.equals(groupStates.get(groupIndex))) {
             stopGroup(groupIndex);
         } else {
-            // 当前是关闭状态，点击后开启
             startGroup(groupIndex);
         }
     }
@@ -285,7 +311,7 @@ public class SwitchControlActivity extends AppCompatActivity {
     private boolean autoOpenRS485() {
         // 使用500000波特率（协议要求）
         final int PROTOCOL_BAUD_RATE = 500000;
-        return serialPortManager.openRS485(PROTOCOL_BAUD_RATE);
+        return serialPortManager.openRS485(PROTOCOL_BAUD_RATE, false);
     }
 
     /**
@@ -294,69 +320,56 @@ public class SwitchControlActivity extends AppCompatActivity {
     private void startGroup(int groupIndex) {
         Group group = GROUPS[groupIndex];
         groupStates.put(groupIndex, true);
+        applyGroupStyle(groupIndex, true);
+        startTimer(groupIndex);
         
-        // 第7组（groupIndex=6）后中灯使用特殊处理
         if (groupIndex == 6) {
-            startRearCenterLight();
+            startRearCenterSender();
+            updateLog(group.name + " 开启");
             return;
         }
         
-        // ⚡ 激活分组（允许发送）
         sendQueueManager.activateGroup(groupIndex);
-        
-        // 判断左右侧（左侧：0,1,4  右侧：2,3,5,6）
-        boolean isLeftSide = (groupIndex == 0 || groupIndex == 1 || groupIndex == 4);
-        
-        // 更新容器样式
-        View container = groupContainers.get(groupIndex);
-        if (container != null) {
-            if (isLeftSide) {
-                container.setBackground(ContextCompat.getDrawable(this, R.drawable.tech_button_left_on));
-            } else {
-                container.setBackground(ContextCompat.getDrawable(this, R.drawable.tech_button_right_on));
-            }
+        Thread running = groupThreads.get(groupIndex);
+        if (running != null && running.isAlive()) {
+            updateLog(group.name + " 开启");
+            return;
         }
         
-        // 启动计时器
-        startTimer(groupIndex);
+        updateLog(group.name + " 开启");
         
-        updateLog(group.name + " 开启 " + (isLeftSide ? "🔵" : "🔴"));
-        
-        // 创建高频循环检测线程
         Thread sendThread = new Thread(() -> {
-            long startTime = System.currentTimeMillis();
-            long sentCount = 0;
-            
-            while (groupStates.get(groupIndex)) {
-                // 高频循环：遍历该组的所有命令
-                for (int i = group.startIndex; i <= group.endIndex; i++) {
-                    // 实时检查开关状态
-                    if (!groupStates.get(groupIndex)) {
-                        break; // 开关已关闭，立即退出
-                    }
-                    
-                    // 直接发送命令（无队列）
-                    boolean success = sendCommandDirect(groupIndex, i);
-                    if (success) {
-                        sentCount++;
-                    }
-                    
-                    // 微小延迟，避免CPU占用过高（可调整）
+            serialPortManager.disableRS485Read();
+            while (pageAlive) {
+                if (!Boolean.TRUE.equals(groupStates.get(groupIndex))) {
                     try {
-                        Thread.sleep(1); // 1ms延迟，实现高频发送
+                        Thread.sleep(15);
+                    } catch (InterruptedException ignored) {
+                    }
+                    continue;
+                }
+                if (!ensureRs485Open()) {
+                    onRs4851Unplugged();
+                    continue;
+                }
+                int sendFail = 0;
+                for (int i = group.startIndex; i <= group.endIndex; i++) {
+                    if (!Boolean.TRUE.equals(groupStates.get(groupIndex))) {
+                        break;
+                    }
+                    if (sendCommandDirect(groupIndex, i)) {
+                        sendFail = 0;
+                    } else if (++sendFail >= 3) {
+                        onRs4851Unplugged();
+                        break;
+                    }
+                    try {
+                        Thread.sleep(1);
                     } catch (InterruptedException e) {
                         break;
                     }
                 }
             }
-            
-            // 发送结束，更新统计
-            long duration = System.currentTimeMillis() - startTime;
-            long finalCount = sentCount;
-            mainHandler.post(() -> {
-                updateLog(String.format("%s 停止 (发送%d条, 耗时%.1fs)", 
-                    group.name, finalCount, duration / 1000.0));
-            });
         }, "LoopDetect-" + groupIndex);
         
         groupThreads.put(groupIndex, sendThread);
@@ -367,189 +380,158 @@ public class SwitchControlActivity extends AppCompatActivity {
      * 停止分组发送
      */
     private void stopGroup(int groupIndex) {
-        Group group = GROUPS[groupIndex];
-        
-        // 第7组（groupIndex=6）后中灯使用特殊处理
-        if (groupIndex == 6) {
-            stopRearCenterLight();
+        groupStates.put(groupIndex, false);
+        applyGroupStyle(groupIndex, false);
+        stopTimer(groupIndex);
+        if (groupIndex != 6) {
+            sendQueueManager.deactivateGroup(groupIndex);
+            Thread thread = groupThreads.get(groupIndex);
+            if (thread != null) {
+                thread.interrupt();
+            }
+        } else if (rearCenterLightThread != null) {
+            rearCenterLightThread.interrupt();
+        }
+        updateLog(GROUPS[groupIndex].name + " 关闭");
+    }
+
+    private void applyGroupStyle(int groupIndex, boolean on) {
+        View container = groupContainers.get(groupIndex);
+        if (container == null) {
             return;
         }
-        
-        // ⚡ 立即停用分组（循环会自动检测并停止）
-        groupStates.put(groupIndex, false);
-        sendQueueManager.deactivateGroup(groupIndex);
-        
-        // 判断左右侧（左侧：0,1,4  右侧：2,3,5,6）
-        boolean isLeftSide = (groupIndex == 0 || groupIndex == 1 || groupIndex == 4);
-        
-        // 更新容器样式
-        View container = groupContainers.get(groupIndex);
-        if (container != null) {
-            if (isLeftSide) {
-                container.setBackground(ContextCompat.getDrawable(this, R.drawable.tech_button_left_off));
-            } else {
-                container.setBackground(ContextCompat.getDrawable(this, R.drawable.tech_button_right_off));
-            }
+        container.setBackground(on ? styleOn[groupIndex] : styleOff[groupIndex]);
+        TextView timer = groupTimers.get(groupIndex);
+        if (timer != null) {
+            timer.setTextColor(on ? 0xFFF6F3EC : 0xFF6E7786);
         }
-        
-        // 停止计时器
-        stopTimer(groupIndex);
-        
-        // 等待线程结束（循环检测会立即响应状态变化）
-        Thread thread = groupThreads.get(groupIndex);
-        if (thread != null) {
-            try {
-                thread.interrupt();
-                thread.join(500); // 最多等待0.5秒
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        View button = groupButtons.get(groupIndex);
+        if (button instanceof TextView) {
+            ((TextView) button).setTextColor(0xFFF6F3EC);
         }
+    }
+
+    private boolean ensureRs485Open() {
+        if (!new File(SerialPortManager.RS485_DEVICE).exists()) {
+            if (serialPortManager.isRS485Open()) {
+                serialPortManager.closeRS485();
+            }
+            return false;
+        }
+        return serialPortManager.isRS485Open() || autoOpenRS485();
+    }
+
+    /**
+     * RS485_1 断开：关掉这一路所有发送按钮并释放串口，下次点击会重新打开。
+     */
+    private synchronized void onRs4851Unplugged() {
+        boolean anyOn = false;
+        for (int i = 0; i < 6; i++) {
+            if (Boolean.TRUE.equals(groupStates.get(i))) {
+                anyOn = true;
+            }
+            groupStates.put(i, false);
+            sendQueueManager.deactivateGroup(i);
+        }
+        serialPortManager.closeRS485();
+        if (!anyOn) {
+            return;
+        }
+        mainHandler.post(() -> {
+            for (int i = 0; i < 6; i++) {
+                applyGroupStyle(i, false);
+                stopTimer(i);
+            }
+            showToast("RS485_1 已断开，可再次打开");
+            updateLog("RS485_1 连接断开，发送已关闭");
+        });
+    }
+
+    /**
+     * RS485_2 断开：关掉后中灯并释放串口，下次点击会重新打开。
+     */
+    private synchronized void onRs4852Unplugged() {
+        if (!Boolean.TRUE.equals(groupStates.get(6)) && rearCenterLightPort == null) {
+            return;
+        }
+        groupStates.put(6, false);
+        SerialPortHelper port = rearCenterLightPort;
+        rearCenterLightPort = null;
+        if (port != null) {
+            port.close();
+        }
+        mainHandler.post(() -> {
+            applyGroupStyle(6, false);
+            stopTimer(6);
+            showToast("后中灯连接已断开，可再次打开");
+            updateLog("RS485_2 连接断开，后中灯已关闭");
+        });
     }
 
     /**
      * 直接发送命令（循环检测模式）
      */
     private boolean sendCommandDirect(int groupId, int cmdIndex) {
-        if (cmdIndex < 0 || cmdIndex >= CMD_LIST.length) {
+        if (cmdIndex < 0 || cmdIndex >= CMD_HEADER.length) {
             return false;
         }
-
-        byte[] fullCmd = CMD_LIST[cmdIndex];
-        int totalLen;
-
-        // 根据命令索引确定总数据长度
-        if (cmdIndex == 2 || cmdIndex == 8) {
-            totalLen = 21;  // ADDR3 和 ADDR9 是21字节
-        } else if (cmdIndex >= 0 && cmdIndex <= 11) {
-            totalLen = 19;  // ADDR1-12 是19字节
-        } else {
-            totalLen = 8;   // ADDR13-20 是8字节
-        }
-
-        // 分割数据
-        byte[] header = new byte[4];
-        System.arraycopy(fullCmd, 0, header, 0, 4);
-        
-        int dataLen = totalLen - 5;
-        byte[] data = new byte[dataLen];
-        System.arraycopy(fullCmd, 5, data, 0, dataLen);
-
-        // 直接发送（无队列）
-        return sendQueueManager.sendCommand(groupId, header, data);
+        return sendQueueManager.sendCommand(groupId, CMD_HEADER[cmdIndex], CMD_DATA[cmdIndex]);
     }
-    
+
     /**
-     * 启动后中灯（使用专用串口 /dev/ttyUSB1）
+     * 后中灯走第二路 485。按钮状态已经先更新，打开串口和发送都在后台。
      */
-    private void startRearCenterLight() {
-        // 打开后中灯专用串口
-        try {
-            rearCenterLightPort = new SerialPortHelper();
-            // 波特率: 115200 (用户提到11520，应该是115200)
-            // 校验位: NONE (0)
-            // 数据位: 8
-            // 停止位: 1
-            boolean opened = rearCenterLightPort.open("/dev/ttyUSB1", 115200);
-            
-            if (!opened) {
-                updateLog("❌ 后中灯串口打开失败 (/dev/ttyUSB1)");
-                showToast("❌ 后中灯串口打开失败");
-                groupStates.put(6, false);
-                return;
-            }
-            
-            updateLog("✅ 后中灯串口已打开 (/dev/ttyUSB1, 115200, NONE, 1bit)");
-            
-            // 更新容器样式 (后中灯使用右侧样式)
-            View container = groupContainers.get(6);
-            if (container != null) {
-                container.setBackground(ContextCompat.getDrawable(this, R.drawable.tech_button_right_on));
-            }
-            
-            // 启动计时器
-            startTimer(6);
-            
-            // 后中灯命令数据
-            final byte[] rearCenterLightCmd = new byte[] {
-                (byte)0x01, (byte)0x10, (byte)0x80, (byte)0x01, (byte)0x00, (byte)0x05, (byte)0x0A, 
-                (byte)0x01, (byte)0x08, (byte)0x10, (byte)0x01, (byte)0x01, (byte)0x00, (byte)0x04, 
-                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0xA6, (byte)0x71
-            };
-            
-            // 创建循环发送线程
-            rearCenterLightThread = new Thread(() -> {
-                long startTime = System.currentTimeMillis();
-                long sentCount = 0;
-                
-                while (groupStates.get(6)) {
-                    try {
-                        // 发送命令
-                        boolean success = rearCenterLightPort.send(rearCenterLightCmd);
-                        if (success) {
-                            sentCount++;
-                        }
-                        
-                        // 延迟，避免发送过快
-                        Thread.sleep(10); // 10ms延迟
-                    } catch (InterruptedException e) {
-                        break;
-                    }
-                }
-                
-                // 发送结束，更新统计
-                long duration = System.currentTimeMillis() - startTime;
-                long finalCount = sentCount;
-                mainHandler.post(() -> {
-                    updateLog(String.format("后中灯停止 (发送%d条, 耗时%.1fs)", 
-                        finalCount, duration / 1000.0));
-                });
-            }, "RearCenterLight-Thread");
-            
-            rearCenterLightThread.start();
-            updateLog("🟢 后中灯开启，循环发送...");
-            
-        } catch (Exception e) {
-            updateLog("❌ 后中灯启动异常: " + e.getMessage());
-            groupStates.put(6, false);
-        }
-    }
-    
-    /**
-     * 停止后中灯
-     */
-    private void stopRearCenterLight() {
-        // 停止状态
-        groupStates.put(6, false);
-        
-        // 停止线程
+    private void startRearCenterSender() {
         if (rearCenterLightThread != null && rearCenterLightThread.isAlive()) {
-            try {
-                rearCenterLightThread.interrupt();
-                rearCenterLightThread.join(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            return;
+        }
+        if (REAR_CENTER_FRAME == null) {
+            groupStates.put(6, false);
+            applyGroupStyle(6, false);
+            stopTimer(6);
+            showToast("后中灯报文转换失败");
+            return;
+        }
+        rearCenterLightThread = new Thread(() -> {
+            while (pageAlive) {
+                if (!Boolean.TRUE.equals(groupStates.get(6))) {
+                    try {
+                        Thread.sleep(15);
+                    } catch (InterruptedException ignored) {
+                    }
+                    continue;
+                }
+                if (!new File(SerialPortManager.RS485_2_DEVICE).exists()) {
+                    onRs4852Unplugged();
+                    continue;
+                }
+                SerialPortHelper port = rearCenterLightPort;
+                if (port == null || !port.isOpen()) {
+                    port = new SerialPortHelper();
+                    boolean opened = port.open(SerialPortManager.RS485_2_DEVICE, 115200, true, false);
+                    if (!opened) {
+                        groupStates.put(6, false);
+                        mainHandler.post(() -> {
+                            applyGroupStyle(6, false);
+                            stopTimer(6);
+                            showToast("后中灯串口打开失败");
+                        });
+                        continue;
+                    }
+                    rearCenterLightPort = port;
+                }
+                try {
+                    if (!port.send(REAR_CENTER_FRAME)) {
+                        onRs4852Unplugged();
+                        continue;
+                    }
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    // 关闭时被打断，回到循环里看开关状态
+                }
             }
-            rearCenterLightThread = null;
-        }
-        
-        // 关闭串口
-        if (rearCenterLightPort != null) {
-            rearCenterLightPort.close();
-            rearCenterLightPort = null;
-            updateLog("✅ 后中灯串口已关闭");
-        }
-        
-        // 更新容器样式
-        View container = groupContainers.get(6);
-        if (container != null) {
-            container.setBackground(ContextCompat.getDrawable(this, R.drawable.tech_button_right_off));
-        }
-        
-        // 停止计时器
-        stopTimer(6);
-        
-        updateLog("🔴 后中灯关闭");
+        }, "RearCenterLight-Thread");
+        rearCenterLightThread.start();
     }
 
     /**
@@ -625,22 +607,15 @@ public class SwitchControlActivity extends AppCompatActivity {
      */
     private void updateLog(String log) {
         mainHandler.post(() -> {
-            String timestamp = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
-            String logLine = "[" + timestamp + "] " + log + "\n";
-            
-            String currentText = tvLog.getText().toString();
-            
-            // 限制日志条目
-            String[] lines = currentText.split("\n");
-            if (lines.length > 30) {
-                StringBuilder sb = new StringBuilder();
-                for (int i = lines.length - 30; i < lines.length; i++) {
-                    sb.append(lines[i]).append("\n");
-                }
-                currentText = sb.toString();
+            logLines.addLast("[" + logTime.format(new Date()) + "] " + log);
+            while (logLines.size() > 30) {
+                logLines.removeFirst();
             }
-            
-            tvLog.setText(currentText + logLine);
+            StringBuilder sb = new StringBuilder();
+            for (String line : logLines) {
+                sb.append(line).append('\n');
+            }
+            tvLog.setText(sb);
         });
     }
 
@@ -650,6 +625,7 @@ public class SwitchControlActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        pageAlive = false;
         super.onDestroy();
         
         // 停止统计更新器
@@ -657,11 +633,16 @@ public class SwitchControlActivity extends AppCompatActivity {
             mainHandler.removeCallbacks(statsUpdateRunnable);
         }
         
-        // 停止所有发送线程和计时器
         for (int i = 0; i < GROUPS.length; i++) {
-            if (groupStates.get(i)) {
-                stopGroup(i);
+            groupStates.put(i, false);
+        }
+        for (Thread thread : groupThreads.values()) {
+            if (thread != null) {
+                thread.interrupt();
             }
+        }
+        if (rearCenterLightThread != null) {
+            rearCenterLightThread.interrupt();
         }
         
         // 清理所有计时器回调

@@ -40,6 +40,12 @@
             android:name=".U625ControlActivity"
             android:exported="false"
             android:screenOrientation="landscape"/>
+
+        <!-- 隐藏调试页：首页标题连点三次进入 -->
+        <activity
+            android:name=".DebugActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"/>
         
         <!-- 原主页面（保留用于调试） -->
         <activity

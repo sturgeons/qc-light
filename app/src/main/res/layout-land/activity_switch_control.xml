@@ -2,485 +2,434 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/tech_bg_gradient"
-    android:padding="12dp">
+    android:orientation="vertical"
+    android:paddingStart="16dp"
+    android:paddingTop="12dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="10dp">
 
-    <!-- ========== 标题栏 ========== -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingBottom="10dp">
-
-        <Button
-            android:id="@+id/btnBack"
-            android:layout_width="90dp"
-            android:layout_height="36dp"
-            android:background="@drawable/tech_button_left_off"
-            android:text="主页"
-            android:textColor="@color/text_bright"
-            android:textSize="13sp"
-            android:textStyle="bold" />
+        android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="72dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_chip"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="返回"
+            android:textColor="@color/text_bright"
+            android:textSize="14sp" />
+
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
-            android:paddingHorizontal="16dp"
-            android:shadowColor="#00D4FF"
-            android:shadowRadius="8"
-            android:text="🚗 CX483灯测试系统"
-            android:textColor="@color/text_accent"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
-        <Button
-            android:id="@+id/btnClearLog"
-            android:layout_width="90dp"
-            android:layout_height="36dp"
-            android:text="清空日志"
-            android:textSize="11sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_bright"
-            android:background="@drawable/tech_button_right_off"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CX483 后灯"
+                android:textColor="@color/text_bright"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:text="按车尾从左到右排列。点亮后持续发送，再点关闭。断开后按钮会灭，可再点打开。"
+                android:textColor="@color/text_muted"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_version"
+            android:textColor="@color/gold"
+            android:textSize="13sp" />
     </LinearLayout>
 
-    <!-- ========== 主控制区域 ========== -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="10dp"
         android:layout_weight="1"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:orientation="horizontal">
 
-        <!-- ========== 左侧灯组面板 ========== -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/tech_panel_left"
             android:orientation="vertical"
-            android:paddingEnd="5dp">
+            android:padding="10dp">
 
-            <!-- 左侧标题 -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="◀ 左侧灯组"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:textColor="#00D4FF"
                 android:gravity="center"
-                android:paddingVertical="6dp"
-                android:shadowColor="#00D4FF"
-                android:shadowRadius="6"/>
+                android:paddingBottom="6dp"
+                android:text="左侧"
+                android:textColor="@color/cyan"
+                android:textSize="13sp"
+                android:textStyle="bold" />
 
             <LinearLayout
+                android:id="@+id/containerGroup1"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_marginTop="4dp"
                 android:layout_weight="1"
+                android:background="@drawable/tech_button_left_off"
                 android:orientation="vertical"
-                android:background="@drawable/tech_panel_left"
-                android:padding="8dp"
-                android:gravity="center">
+                android:padding="6dp">
 
-                <!-- 左转1组 -->
-                <LinearLayout
-                    android:id="@+id/containerGroup1"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginVertical="4dp"
-                    android:orientation="vertical"
-                    android:background="@drawable/tech_button_left_off"
-                    android:padding="8dp">
-                    
-                    <Button
-                        android:id="@+id/btnGroup1"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:text="左转1\nADDR 1-3"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_bright"
-                        android:background="@android:color/transparent"
-                        android:gravity="center"/>
-                    
-                    <TextView
-                        android:id="@+id/tvTimer1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="00:00"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#00D4FF"
-                        android:gravity="center"
-                        android:fontFamily="monospace"
-                        android:shadowColor="#00D4FF"
-                        android:shadowRadius="4"
-                        android:paddingTop="4dp"/>
-                </LinearLayout>
-
-                <!-- 左转2组 -->
-                <LinearLayout
-                    android:id="@+id/containerGroup2"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginVertical="4dp"
-                    android:orientation="vertical"
-                    android:background="@drawable/tech_button_left_off"
-                    android:padding="8dp">
-                    
-                    <Button
-                        android:id="@+id/btnGroup2"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:text="左转2\nADDR 4-6"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_bright"
-                        android:background="@android:color/transparent"
-                        android:gravity="center"/>
-                    
-                    <TextView
-                        android:id="@+id/tvTimer2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="00:00"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#00D4FF"
-                        android:gravity="center"
-                        android:fontFamily="monospace"
-                        android:shadowColor="#00D4FF"
-                        android:shadowRadius="4"
-                        android:paddingTop="4dp"/>
-                </LinearLayout>
-
-                <!-- 左尾灯组 -->
-                <LinearLayout
-                    android:id="@+id/containerGroup5"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginVertical="4dp"
-                    android:orientation="vertical"
-                    android:background="@drawable/tech_button_left_off"
-                    android:padding="8dp">
-                    
-                    <Button
-                        android:id="@+id/btnGroup5"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:text="左尾灯\nADDR 13-15"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_bright"
-                        android:background="@android:color/transparent"
-                        android:gravity="center"/>
-                    
-                    <TextView
-                        android:id="@+id/tvTimer5"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="00:00"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#00D4FF"
-                        android:gravity="center"
-                        android:fontFamily="monospace"
-                        android:shadowColor="#00D4FF"
-                        android:shadowRadius="4"
-                        android:paddingTop="4dp"/>
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- ========== 中央分隔线 ========== -->
-        <View
-            android:layout_width="2dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/tech_divider_vertical"
-            android:layout_marginHorizontal="5dp"/>
-
-        <!-- ========== 右侧灯组面板 ========== -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp">
-
-            <!-- 右侧标题 -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="右侧灯组 ▶"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:textColor="#FF6B35"
-                android:gravity="center"
-                android:paddingVertical="6dp"
-                android:shadowColor="#FF6B35"
-                android:shadowRadius="6"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:background="@drawable/tech_panel_right"
-                android:padding="8dp"
-                android:gravity="center">
-
-                <!-- 右转1组 -->
-                <LinearLayout
-                    android:id="@+id/containerGroup3"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginVertical="4dp"
-                    android:orientation="vertical"
-                    android:background="@drawable/tech_button_right_off"
-                    android:padding="8dp">
-                    
-                    <Button
-                        android:id="@+id/btnGroup3"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:text="右转1\nADDR 7-9"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_bright"
-                        android:background="@android:color/transparent"
-                        android:gravity="center"/>
-                    
-                    <TextView
-                        android:id="@+id/tvTimer3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="00:00"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#FF6B35"
-                        android:gravity="center"
-                        android:fontFamily="monospace"
-                        android:shadowColor="#FF6B35"
-                        android:shadowRadius="4"
-                        android:paddingTop="4dp"/>
-                </LinearLayout>
-
-                <!-- 右转2组 -->
-                <LinearLayout
-                    android:id="@+id/containerGroup4"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginVertical="4dp"
-                    android:orientation="vertical"
-                    android:background="@drawable/tech_button_right_off"
-                    android:padding="8dp">
-                    
-                    <Button
-                        android:id="@+id/btnGroup4"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:text="右转2\nADDR 10-12"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_bright"
-                        android:background="@android:color/transparent"
-                        android:gravity="center"/>
-                    
-                    <TextView
-                        android:id="@+id/tvTimer4"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="00:00"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#FF6B35"
-                        android:gravity="center"
-                        android:fontFamily="monospace"
-                        android:shadowColor="#FF6B35"
-                        android:shadowRadius="4"
-                        android:paddingTop="4dp"/>
-                </LinearLayout>
-
-                <!-- 右尾灯组 -->
-                <LinearLayout
-                    android:id="@+id/containerGroup6"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginVertical="4dp"
-                    android:orientation="vertical"
-                    android:background="@drawable/tech_button_right_off"
-                    android:padding="8dp">
-                    
-                    <Button
-                        android:id="@+id/btnGroup6"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:text="右尾灯\nADDR 16-18"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_bright"
-                        android:background="@android:color/transparent"
-                        android:gravity="center"/>
-                    
-                    <TextView
-                        android:id="@+id/tvTimer6"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="00:00"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#FF6B35"
-                        android:gravity="center"
-                        android:fontFamily="monospace"
-                        android:shadowColor="#FF6B35"
-                        android:shadowRadius="4"
-                        android:paddingTop="4dp"/>
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- ========== 中央分隔线 ========== -->
-        <View
-            android:layout_width="2dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/tech_divider_vertical"
-            android:layout_marginHorizontal="5dp"/>
-
-        <!-- ========== 后中灯与日志区域 ========== -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1.3"
-            android:orientation="vertical">
-
-            <!-- 后中灯区域 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="8dp">
-
-                <!-- 后中灯标题 -->
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="⬆ 后中灯"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:textColor="#FF6B35"
-                    android:gravity="center"
-                    android:paddingVertical="6dp"
-                    android:shadowColor="#FF6B35"
-                    android:shadowRadius="6"/>
-
-                <!-- 后中灯控制按钮 -->
-                <LinearLayout
-                    android:id="@+id/containerGroup7"
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:background="@drawable/tech_button_right_off"
-                    android:orientation="vertical"
-                    android:padding="10dp">
-
-                    <Button
-                        android:id="@+id/btnGroup7"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:background="@android:color/transparent"
-                        android:text="后中灯\nADDR 19-20"
-                        android:textColor="@color/text_bright"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
-
-                    <TextView
-                        android:id="@+id/tvTimer7"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="monospace"
-                        android:gravity="center"
-                        android:shadowColor="#FF6B35"
-                        android:shadowRadius="4"
-                        android:text="00:00"
-                        android:textColor="#FF6B35"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:paddingTop="4dp"/>
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- 日志区域 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:paddingTop="4dp">
-
-                <!-- 日志标题栏 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingVertical="6dp"
-                    android:paddingHorizontal="2dp">
-                    
-                    <View
-                        android:layout_width="3dp"
-                        android:layout_height="16dp"
-                        android:background="#00D4FF"
-                        android:layout_marginEnd="8dp"/>
-                    
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="运行日志"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_accent"
-                        android:shadowColor="#00D4FF"
-                        android:shadowRadius="3"/>
-                </LinearLayout>
-
-                <!-- 日志显示区 -->
-                <ScrollView
-                    android:id="@+id/scrollViewLog"
+                    android:id="@+id/btnGroup1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:background="#0F1530"
-                    android:padding="8dp"
-                    android:scrollbars="vertical">
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="左转 1\n地址 1–3"
+                    android:textColor="@color/text_bright"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/tvLog"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="9sp"
-                        android:textColor="@color/text_dim"
-                        android:fontFamily="monospace"
-                        android:lineSpacingExtra="2dp"/>
-                </ScrollView>
+                <TextView
+                    android:id="@+id/tvTimer1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="00:00"
+                    android:textColor="@color/text_muted"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/containerGroup2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/tech_button_left_off"
+                android:orientation="vertical"
+                android:padding="6dp">
+
+                <TextView
+                    android:id="@+id/btnGroup2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="左转 2\n地址 4–6"
+                    android:textColor="@color/text_bright"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvTimer2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="00:00"
+                    android:textColor="@color/text_muted"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/containerGroup5"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/tech_button_left_off"
+                android:orientation="vertical"
+                android:padding="6dp">
+
+                <TextView
+                    android:id="@+id/btnGroup5"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="左尾灯\n地址 13–15"
+                    android:textColor="@color/text_bright"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvTimer5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="00:00"
+                    android:textColor="@color/text_muted"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="0.92"
+            android:background="@drawable/tech_panel_center"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingBottom="6dp"
+                android:text="后中 · 独立通道"
+                android:textColor="@color/gold"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/containerGroup7"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/tech_button_center_off"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/btnGroup7"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="后中灯\n地址 19–20"
+                    android:textColor="@color/text_bright"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvTimer7"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="00:00"
+                    android:textColor="@color/text_muted"
+                    android:textSize="22sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="8dp"
+                android:text="与左右灯分开连接"
+                android:textColor="@color/text_muted"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/tech_panel_right"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingBottom="6dp"
+                android:text="右侧"
+                android:textColor="@color/amber"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/containerGroup3"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/tech_button_right_off"
+                android:orientation="vertical"
+                android:padding="6dp">
+
+                <TextView
+                    android:id="@+id/btnGroup3"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="右转 1\n地址 7–9"
+                    android:textColor="@color/text_bright"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvTimer3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="00:00"
+                    android:textColor="@color/text_muted"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/containerGroup4"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/tech_button_right_off"
+                android:orientation="vertical"
+                android:padding="6dp">
+
+                <TextView
+                    android:id="@+id/btnGroup4"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="右转 2\n地址 10–12"
+                    android:textColor="@color/text_bright"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvTimer4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="00:00"
+                    android:textColor="@color/text_muted"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/containerGroup6"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/tech_button_right_off"
+                android:orientation="vertical"
+                android:padding="6dp">
+
+                <TextView
+                    android:id="@+id/btnGroup6"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="右尾灯\n地址 16–18"
+                    android:textColor="@color/text_bright"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvTimer6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="00:00"
+                    android:textColor="@color/text_muted"
+                    android:textSize="16sp" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ScrollView
+            android:id="@+id/scrollViewLog"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_log"
+            android:paddingStart="12dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="8dp"
+            android:scrollbars="vertical">
+
+            <TextView
+                android:id="@+id/tvLog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:lineSpacingExtra="2dp"
+                android:textColor="@color/text_dim"
+                android:textSize="11sp" />
+        </ScrollView>
+
+        <TextView
+            android:id="@+id/btnClearLog"
+            android:layout_width="72dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_chip"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="清空"
+            android:textColor="@color/text_dim"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="成都德比数联科技有限公司   ·   V3.5.1   ·   技术支持 姚先生 19242828258"
+        android:textColor="@color/text_muted"
+        android:textSize="11sp" />
 </LinearLayout>

@@ -32,11 +32,26 @@ public class SerialPortHelper {
     
     /**
      * 打开串口
-     * @param device 设备路径，如 /dev/ttyS2
+     * @param device 设备路径，如 /dev/ttyAS6
      * @param baudRate 波特率，如 9600, 115200
      * @return 是否成功
      */
     public boolean open(String device, int baudRate) {
+        return open(device, baudRate, false);
+    }
+
+    /**
+     * 打开串口
+     * @param rs485Mode true 时调用驱动切换为 RS485（发送期间拉高方向脚）
+     */
+    public boolean open(String device, int baudRate, boolean rs485Mode) {
+        return open(device, baudRate, rs485Mode, true);
+    }
+
+    /**
+     * @param enableRead 仅发送的控制口关掉读线程。485 未接线时 RX 悬空会不停进数据，读线程会把界面卡住。
+     */
+    public boolean open(String device, int baudRate, boolean rs485Mode, boolean enableRead) {
         mDevicePath = device;
         mBaudRate = baudRate;
         
@@ -54,16 +69,21 @@ public class SerialPortHelper {
                 Log.e(TAG, "打开串口失败: " + device);
                 return false;
             }
+
+            if (rs485Mode && !nativeEnableRs485(mFd)) {
+                Log.w(TAG, "RS485模式设置失败，仍继续使用该串口: " + device);
+            }
             
-            mFileInputStream = new FileInputStream(mFd);
             mFileOutputStream = new FileOutputStream(mFd);
-            
-            // 启动读取线程
-            mReadThread = new ReadThread();
-            mReadThread.start();
+            if (enableRead) {
+                mFileInputStream = new FileInputStream(mFd);
+                mReadThread = new ReadThread();
+                mReadThread.start();
+            }
             
             isOpen = true;
-            Log.i(TAG, "串口打开成功: " + device + ", 波特率: " + baudRate);
+            Log.i(TAG, "串口打开成功: " + device + ", 波特率: " + baudRate
+                    + (rs485Mode ? ", RS485" : ""));
             return true;
             
         } catch (Exception e) {
@@ -74,9 +94,28 @@ public class SerialPortHelper {
     }
     
     /**
+     * 停掉接收。未接线的 485 口会持续收到噪声，读线程会占满主线程。
+     */
+    public void stopRead() {
+        mOnDataReceiveListener = null;
+        ReadThread thread = mReadThread;
+        mReadThread = null;
+        if (mFileInputStream != null) {
+            try {
+                mFileInputStream.close();
+            } catch (IOException ignored) {
+            }
+            mFileInputStream = null;
+        }
+        if (thread != null) {
+            thread.interrupt();
+        }
+    }
+
+    /**
      * 关闭串口
      */
-    public void close() {
+    public synchronized void close() {
         if (mReadThread != null) {
             mReadThread.interrupt();
             mReadThread = null;
@@ -112,7 +151,7 @@ public class SerialPortHelper {
     /**
      * 发送数据
      */
-    public boolean send(byte[] data) {
+    public synchronized boolean send(byte[] data) {
         if (!isOpen || mFileOutputStream == null) {
             Log.e(TAG, "串口未打开");
             return false;
@@ -123,7 +162,8 @@ public class SerialPortHelper {
             mFileOutputStream.flush();
             return true;
         } catch (IOException e) {
-            Log.e(TAG, "发送数据失败", e);
+            Log.e(TAG, "发送数据失败，连接已断开: " + mDevicePath, e);
+            close();
             return false;
         }
     }
@@ -167,8 +207,6 @@ public class SerialPortHelper {
             boolean success = nativeSetBaudRate(mFd, baudRate, parity);
             if (success) {
                 mBaudRate = baudRate;
-                String parityStr = (parity == 0 ? "无" : (parity == 1 ? "奇" : "偶")) + "校验";
-                Log.i(TAG, "波特率已切换到: " + baudRate + ", " + parityStr);
             }
             return success;
         } catch (Exception e) {
@@ -242,6 +280,7 @@ public class SerialPortHelper {
     private native FileDescriptor nativeOpen(String path, int baudRate, int dataBits, int stopBits, int parity);
     private native void nativeClose();
     private native boolean nativeSetBaudRate(FileDescriptor fd, int baudRate, int parity);
+    private native boolean nativeEnableRs485(FileDescriptor fd);
     
     static {
         try {

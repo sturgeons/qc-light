@@ -3,7 +3,6 @@ package com.example.qc_1;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,7 +14,7 @@ import java.util.Locale;
 
 /**
  * U625格栅灯控制页面
- * 通过RS232串口发送控制指令
+ * 通过 RS485_2 发送控制指令。
  */
 public class U625ControlActivity extends AppCompatActivity {
 
@@ -66,8 +65,8 @@ public class U625ControlActivity extends AppCompatActivity {
     private Handler mainHandler;
     private TextView tvLog;
 
-    // 串口配置
-    private static final String SERIAL_DEVICE = "/dev/ttyUSB1";
+    // 原 232（/dev/ttyUSB1）已作废，改走第二路 485
+    private static final String SERIAL_DEVICE = SerialPortManager.RS485_2_DEVICE;
     private static final int BAUD_RATE = 115200;
     private static final int SEND_DELAY_MS = 50; // 两次发送之间的延迟（毫秒）
 
@@ -123,10 +122,10 @@ public class U625ControlActivity extends AppCompatActivity {
     private void initSerialPort() {
         try {
             serialPort = new SerialPortHelper();
-            boolean opened = serialPort.open(SERIAL_DEVICE, BAUD_RATE);
+            boolean opened = serialPort.open(SERIAL_DEVICE, BAUD_RATE, true);
             
             if (opened) {
-                updateLog("✅ 串口已打开 (" + SERIAL_DEVICE + ", " + BAUD_RATE + ", NONE, 1bit)");
+                updateLog("✅ 串口已打开 (" + SERIAL_DEVICE + ", " + BAUD_RATE + ", RS485, NONE, 1bit)");
                 showToast("✅ 串口已打开");
             } else {
                 updateLog("❌ 串口打开失败 (" + SERIAL_DEVICE + ")");
@@ -156,12 +155,19 @@ public class U625ControlActivity extends AppCompatActivity {
         // 在后台线程中发送指令
         new Thread(() -> {
             try {
+                byte[] frame = LinBusModule.fromToomossWrite(command);
+                if (frame == null) {
+                    updateLog("❌ 图莫斯报文无法转换成485主机帧");
+                    mainHandler.post(() -> showToast("❌ 报文转换失败"));
+                    return;
+                }
                 updateLog("📤 发送指令: " + commandName);
+                updateLog("485主机帧: " + LinBusModule.toHex(frame));
                 
                 // 第一次发送
-                boolean success1 = serialPort.send(command);
+                boolean success1 = serialPort.send(frame);
                 if (success1) {
-                    updateLog("✅ 第1次发送成功 (" + command.length + "字节)");
+                    updateLog("✅ 第1次发送成功 (" + frame.length + "字节)");
                 } else {
                     updateLog("❌ 第1次发送失败");
                 }
@@ -170,9 +176,9 @@ public class U625ControlActivity extends AppCompatActivity {
                 Thread.sleep(SEND_DELAY_MS);
                 
                 // 第二次发送
-                boolean success2 = serialPort.send(command);
+                boolean success2 = serialPort.send(frame);
                 if (success2) {
-                    updateLog("✅ 第2次发送成功 (" + command.length + "字节)");
+                    updateLog("✅ 第2次发送成功 (" + frame.length + "字节)");
                 } else {
                     updateLog("❌ 第2次发送失败");
                 }
